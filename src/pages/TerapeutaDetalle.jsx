@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/t1.png";
+import { API_URL } from "../config/api";
 
 function TerapeutaDetalle() {
   const { id } = useParams();
@@ -23,7 +24,7 @@ function TerapeutaDetalle() {
         setError("");
         setLoading(true);
 
-        const res = await fetch(`/api/terapeutas/${id}`, {
+        const res = await fetch(`${API_URL}/api/terapeutas/${id}`, {
           signal: controller.signal,
         });
 

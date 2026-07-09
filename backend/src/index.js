@@ -3,7 +3,15 @@ import cors from 'cors'
 import { pool } from './db.js'
 
 const app = express()
-app.use(cors())
+
+const allowedOrigins = (process.env.FRONTEND_URL ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+
+app.use(cors({
+  origin: allowedOrigins.length ? allowedOrigins : true,
+}))
 app.use(express.json())
 
 
@@ -129,6 +137,7 @@ app.get("/api/terapeutas/:id", async (req, res) => {
 });
 
 
-app.listen(3001, () => {
-  console.log('API corriendo en http://localhost:3001')
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`API corriendo en el puerto ${PORT}`)
 })

@@ -4,6 +4,7 @@ import "../style/terapeutas.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import defaultAvatar from "../assets/t1.png";
+import { API_URL } from "../config/api";
 
 function Terapeutas() {
   const [data, setData] = useState([]);
@@ -18,7 +19,7 @@ function Terapeutas() {
         setError("");
         setLoading(true);
 
-        const res = await fetch("/api/terapeutas/featured", {
+        const res = await fetch(`${API_URL}/api/terapeutas/featured`, {
           signal: controller.signal,
         });
 

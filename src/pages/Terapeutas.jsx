@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import defaultAvatar from "../assets/t1.png";
+import { API_URL } from "../config/api";
 
 function Terapeutas() {
   const [therapists, setTherapists] = useState([]);
@@ -32,7 +33,7 @@ function Terapeutas() {
       if (query) params.set("q", query);
       if (!reset && cursor) params.set("cursor", String(cursor));
 
-      const res = await fetch(`/api/terapeutas?${params.toString()}`);
+      const res = await fetch(`${API_URL}/api/terapeutas?${params.toString()}`);
       if (!res.ok) throw new Error("HTTP " + res.status);
 
       const json = await res.json();
