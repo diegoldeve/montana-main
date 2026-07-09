@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import defaultAvatar from "../assets/t1.png";
 
 function TerapeutaDetalle() {
   const { id } = useParams();
@@ -135,7 +136,7 @@ function TerapeutaDetalle() {
           {/* Tarjeta principal */}
           <div className="therapist-detail-card">
             <div className="therapist-detail-image-wrapper">
-              <img src="/src/assets/t1.png" alt={`Foto de ${nombreCompleto}`} />
+              <img src={defaultAvatar} alt={`Foto de ${nombreCompleto}`} />
             </div>
 
             <div className="therapist-detail-info">

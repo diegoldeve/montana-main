@@ -1,4 +1,9 @@
 import "../style/beneficios.css";
+import curva3 from "../assets/curva3.png";
+import cursoBienvenidaIcon from "../assets/Curso_bienvenida.png";
+import accesoBibliotecaIcon from "../assets/Acceso_biblioteca.png";
+import beneficiosPreferencialesIcon from "../assets/Beneficios_preferenciales.png";
+import preventasExclusivasIcon from "../assets/Preventas_exclusivas.png";
 
 function Beneficios() {
   return (
@@ -6,7 +11,7 @@ function Beneficios() {
   <div className="beneficios-bg-line"></div>
 
   <div className="beneficios-container">
-    <img src="/src/assets/curva3.png" className="beneficios-line" alt="" />
+    <img src={curva3} className="beneficios-line" alt="" />
 
     <div className="beneficios-left">
       <h2>
@@ -19,7 +24,7 @@ function Beneficios() {
     <div className="beneficios-right">
       <ul>
         <li>
-          <img src="/src/assets/Curso_bienvenida.png" alt="icono" />
+          <img src={cursoBienvenidaIcon} alt="icono" />
           <div>
             <h3>Curso de bienvenida</h3>
             <p>
@@ -29,7 +34,7 @@ function Beneficios() {
         </li>
 
         <li>
-          <img src="/src/assets/Acceso_biblioteca.png" alt="icono" />
+          <img src={accesoBibliotecaIcon} alt="icono" />
           <div>
             <h3>Acceso a la biblioteca completa</h3>
             <p>
@@ -39,7 +44,7 @@ function Beneficios() {
         </li>
 
         <li>
-          <img src="/src/assets/Beneficios_preferenciales.png" alt="icono" />
+          <img src={beneficiosPreferencialesIcon} alt="icono" />
           <div>
             <h3>Beneficios preferenciales</h3>
             <p>
@@ -49,7 +54,7 @@ function Beneficios() {
         </li>
 
         <li>
-          <img src="/src/assets/Preventas_exclusivas.png" alt="icono" />
+          <img src={preventasExclusivasIcon} alt="icono" />
           <div>
             <h3>Preventas exclusivas</h3>
             <p>

@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import defaultAvatar from "../assets/t1.png";
 
 function Terapeutas() {
   const [therapists, setTherapists] = useState([]);
@@ -143,7 +144,7 @@ function Terapeutas() {
                       <article className="therapist-card">
                         <div className="therapist-image-wrapper">
                           <img
-                            src="/src/assets/t1.png"
+                            src={defaultAvatar}
                             alt={`Foto de ${name}`}
                           />
                         </div>

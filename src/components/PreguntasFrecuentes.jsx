@@ -1,5 +1,5 @@
 import "../style/preguntas.css";
-import Curva from "/src/assets/curva3.png"; // tu curva verde
+import Curva from "../assets/curva3.png"; // tu curva verde
 
 function PreguntasFrecuentes() {
   const faqs = [

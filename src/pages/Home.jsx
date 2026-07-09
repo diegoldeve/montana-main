@@ -5,6 +5,12 @@ import Testimonios from "../components/Testimonios.jsx";
 import Beneficios from '../components/Beneficios.jsx'; 
 import PreguntasFrecuentes from '../components/PreguntasFrecuentes.jsx';
 import { useEffect } from "react";
+import heroImg from "../assets/Header.png";
+import paso1 from "../assets/Paso_1.png";
+import paso2 from "../assets/Paso_2.png";
+import paso3 from "../assets/Paso_3.png";
+import curva1 from "../assets/curva1.png";
+import curva2 from "../assets/curva2.png";
 
 
 function Home() {
@@ -29,7 +35,7 @@ function Home() {
           </h1>
 
           <div className="hero-grid">
-            <img src="/src/assets/Header.png" className="hero-img" />
+            <img src={heroImg} className="hero-img" />
 
             <div className="hero-text-boxes">
               <div className="hero-questions">
@@ -115,7 +121,7 @@ function Home() {
 
             {/* ITEM 1 */}
             <div className="process-item">
-              <img src="/src/assets/Paso_1.png" alt="Platica" className="process-icon" />
+              <img src={paso1} alt="Platica" className="process-icon" />
               <h3>1. Platica con<br />nuestras canalizadoras</h3>
               <p>
                 Cuéntanos qué estás buscando y cómo te gustaría que te acompañemos.
@@ -124,7 +130,7 @@ function Home() {
 
             {/* ITEM 2 */}
             <div className="process-item">
-              <img src="/src/assets/Paso_2.png" alt="Elegir terapeuta" className="process-icon" />
+              <img src={paso2} alt="Elegir terapeuta" className="process-icon" />
               <h3>2. Te ayudamos a<br />elegir terapeuta</h3>
               <p>
                 Nuestro equipo te pedirá llenar un breve formulario y te orientará según tu motivo de consulta.
@@ -133,7 +139,7 @@ function Home() {
 
             {/* ITEM 3 */}
             <div className="process-item">
-              <img src="/src/assets/Paso_3.png" alt="Comienza tu proceso" className="process-icon" />
+              <img src={paso3} alt="Comienza tu proceso" className="process-icon" />
               <h3>3. Comienza tu<br />proceso</h3>
               <p>
                 Agenda tu primera sesión y da el primer paso hacia tu bienestar emocional.
@@ -150,8 +156,8 @@ function Home() {
       </div>
       {/*------------------ Terapeutas----------------------------- */}
       <section className="terapeutas-section">
-        <img src="/src/assets/curva1.png" className="bg-line bg-line-top" />
-        <img src="/src/assets/curva2.png" className="bg-line bg-line-bottom" />
+        <img src={curva1} className="bg-line bg-line-top" />
+        <img src={curva2} className="bg-line bg-line-bottom" />
         {/* TITULO + TEXTO SUPERIOR */}
         <div className="terapeutas-top">
           <h2>¿Cuál es el mejor terapeuta para mi?</h2>

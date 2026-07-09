@@ -1,5 +1,5 @@
 import "../style/testimonios.css";
-import iconQuote from "/src/assets/gotas.png"; // ← tu icono de comillas
+import iconQuote from "../assets/gotas.png"; // ← tu icono de comillas
 
 function Testimonios() {
 

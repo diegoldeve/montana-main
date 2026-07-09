@@ -3,6 +3,7 @@ import "@splidejs/react-splide/css";
 import "../style/terapeutas.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
+import defaultAvatar from "../assets/t1.png";
 
 function Terapeutas() {
   const [data, setData] = useState([]);
@@ -129,7 +130,7 @@ function Terapeutas() {
                   state={{ from: "/terapeutas", scrollY: window.scrollY }}
                 >
                   <img
-                    src="/src/assets/t1.png"
+                    src={defaultAvatar}
                     className="card-img"
                     alt={nombreCompleto}
                   />

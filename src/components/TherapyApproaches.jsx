@@ -1,5 +1,13 @@
 
 import "../style/TherapyApproaches.css";
+import psicoanaliticaIcon from "../assets/Psicoanalitica.png";
+import cognitivoConductualIcon from "../assets/Cognitivo_Conductual.png";
+import gestaltIcon from "../assets/Gestalt.png";
+import racionalEmotivaIcon from "../assets/Racional_Emotiva.png";
+import narrativaIcon from "../assets/Narrativa.png";
+import sistemicoRelacionalIcon from "../assets/Sistemico_Relacional.png";
+import breveCentradaIcon from "../assets/Breve_Centrada.png";
+import humanistaIcon from "../assets/Humanista.png";
 
 const approaches = [
   {
@@ -7,7 +15,7 @@ const approaches = [
     description:
       "Explora el inconsciente y los conflictos internos para entender y transformar la conducta actual a partir de analizar la relación entre pasado y presente.",
     accentColor: "#FEAC2D",
-    iconSrc: "/src/assets/Psicoanalitica.png",
+    iconSrc: psicoanaliticaIcon,
     iconAlt: "Icono de Terapia Psicoanalítica",
   },
   {
@@ -15,7 +23,7 @@ const approaches = [
     description:
       "Se enfoca en identificar y modificar pensamientos y comportamientos que obstaculizan el bienestar emocional.",
     accentColor: "#99BA05",
-    iconSrc: "/src/assets/Cognitivo_Conductual.png",
+    iconSrc: cognitivoConductualIcon,
     iconAlt: "Icono de Terapia Cognitivo-Conductual",
   },
   {
@@ -23,7 +31,7 @@ const approaches = [
     description:
       "Promueve la conciencia plena del aquí y ahora, integrando pensamientos, emociones y acciones para lograr un cambio personal.",
     accentColor: "#B7CE50",
-    iconSrc: "/src/assets/Gestalt.png",
+    iconSrc: gestaltIcon,
     iconAlt: "Icono de Terapia Gestalt",
   },
   {
@@ -31,7 +39,7 @@ const approaches = [
     description:
       "Ayuda a identificar, cuestionar y reemplazar creencias irracionales que generan malestar emocional.",
     accentColor: "#C6F5C3",
-    iconSrc: "/src/assets/Racional_Emotiva.png",
+    iconSrc: racionalEmotivaIcon,
     iconAlt: "Icono de Terapia Racional Emotiva Conductual",
   },
   {
@@ -39,7 +47,7 @@ const approaches = [
     description:
       "Trabaja con las historias que las personas se cuentan a partir de su historia de vida, resignificándolas para generar nuevas formas de identidad.",
     accentColor: "#FEAC2D",
-    iconSrc: "/src/assets/Narrativa.png",
+    iconSrc: narrativaIcon,
     iconAlt: "Icono de Terapia Narrativa",
   },
   {
@@ -47,7 +55,7 @@ const approaches = [
     description:
       "Analiza las dinámicas individuales, de pareja y familia como sistemas interconectados, con el objetivo de mejorar la comunicación.",
     accentColor: "#99BA05",
-    iconSrc: "/src/assets/Sistemico_Relacional.png",
+    iconSrc: sistemicoRelacionalIcon,
     iconAlt: "Icono de Terapia Sistémico-Relacional",
   },
   {
@@ -55,7 +63,7 @@ const approaches = [
     description:
       "Promueve la identificación de fortalezas y recursos personales para construir soluciones concretas.",
     accentColor: "#B7CE50",
-    iconSrc: "/src/assets/Breve_Centrada.png",
+    iconSrc: breveCentradaIcon,
     iconAlt: "Icono de Terapia Breve Centrada en Soluciones",
   },
   {
@@ -63,7 +71,7 @@ const approaches = [
     description:
       "Confía en la capacidad de crecimiento de las personas, priorizando la autenticidad y la autorrealización personal.",
     accentColor: "#FEAC2D",
-    iconSrc: "/src/assets/Humanista.png",
+    iconSrc: humanistaIcon,
     iconAlt: "Icono de Terapia Humanista",
   },
 ];

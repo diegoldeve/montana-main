@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import Beneficios from '../components/Beneficios.jsx'; 
 import TherapyApproaches from "../components/TherapyApproaches.jsx";
 import { useEffect } from "react";
+import tereImg from "../assets/tere.png";
 
 function Nosotros() {
   useEffect(() => {
@@ -26,7 +27,7 @@ function Nosotros() {
     </div>
 
     <div className="nosotros-right">
-      <img src="/src/assets/tere.png" alt="Tere Díaz" className="nosotros-img" />
+      <img src={tereImg} alt="Tere Díaz" className="nosotros-img" />
     </div>
 
   </div>

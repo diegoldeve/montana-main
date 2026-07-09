@@ -1,5 +1,9 @@
 import "../style/Footer.css";
 import { Link } from "react-router-dom";
+import logoblanco from "../assets/logoblanco.png";
+import facebookIcon from "../assets/Facebook.png";
+import instagramIcon from "../assets/Instagram.png";
+import linkedinIcon from "../assets/LinkedIn.png";
 function Footer() {
   return (
     <footer className="footer-section">
@@ -7,7 +11,7 @@ function Footer() {
 
         {/* LOGO */}
         <img
-          src="/src/assets/logoblanco.png"
+          src={logoblanco}
           alt="La Montaña"
           className="footer-logo"
         />
@@ -22,13 +26,13 @@ function Footer() {
         {/* REDES SOCIALES */}
         <div className="footer-socials">
           <a href="#" aria-label="Facebook">
-            <img src="/src/assets/Facebook.png" alt="Facebook" />
+            <img src={facebookIcon} alt="Facebook" />
           </a>
           <a href="#" aria-label="Instagram">
-            <img src="/src/assets/Instagram.png" alt="Instagram" />
+            <img src={instagramIcon} alt="Instagram" />
           </a>
           <a href="#" aria-label="LinkedIn">
-            <img src="/src/assets/LinkedIn.png" alt="LinkedIn" />
+            <img src={linkedinIcon} alt="LinkedIn" />
           </a>
         </div>
 
