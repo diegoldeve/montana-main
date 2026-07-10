@@ -24,13 +24,6 @@ function Testimonios() {
     },
   ];
 
-  const videos = [
-    "/src/assets/video1.mp4",
-    "/src/assets/video2.mp4",
-    "/src/assets/video3.mp4",
-    "/src/assets/video4.mp4",
-  ];
-
   return (
     <section className="testimonios-section">
 
@@ -56,19 +49,6 @@ function Testimonios() {
               <span /> {t.autor} · {t.tipo}
             </p>
           </div>
-        ))}
-      </div>
-
-      {/* GRID DE VIDEOS */}
-      <div className="videos-grid">
-        {videos.map((src, i) => (
-          <video
-            key={i}
-            className="video-item"
-            src={src}
-            controls
-            poster="/src/assets/video-placeholder.png"
-          />
         ))}
       </div>
 
