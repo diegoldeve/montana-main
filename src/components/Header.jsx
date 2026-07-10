@@ -2,9 +2,11 @@ import { useState } from "react";
 import "../style/header.css";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import { useAgendaModal } from "../context/AgendaModalContext";
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const { openModal } = useAgendaModal();
 
   return (
     <header className="header-container">
@@ -23,9 +25,9 @@ function Header() {
         </nav>
 
         {/* BOTÓN DESKTOP */}
-        <Link to="/terapeutas" className="btn-agendar">
+        <button className="btn-agendar" onClick={openModal}>
           Agenda tu sesión en línea
-        </Link>
+        </button>
 
         {/* HAMBURGER */}
         <button
@@ -49,13 +51,15 @@ function Header() {
         <Link to="/terapeutas" onClick={() => setOpen(false)}>
           Nuestros terapeutas
         </Link>
-        <Link
-          to="/terapeutas"
+        <button
           className="btn-agendar mobile"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            openModal();
+          }}
         >
           Agenda tu sesión en línea
-        </Link>
+        </button>
       </nav>
     </header>
   );

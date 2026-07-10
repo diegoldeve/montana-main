@@ -151,9 +151,12 @@ h1, h2, h3, h4, h5 {
   background-color: var(--color-primary-dark);
   padding: 12px 28px;
   border-radius: 30px;
+  border: none;
   color: var(--color-white);
   font-family: var(--font-body);
+  font-size: var(--text-md);
   text-decoration: none;
+  cursor: pointer;
 }
 
 .hero-btn:hover {
@@ -231,11 +234,14 @@ h1, h2, h3, h4, h5 {
   background-color: var(--color-button-green); /* EL NUEVO VERDE */
   color: var(--color-primary-dark);
   font-family: var(--font-body);
+  font-size: 15px;
   padding: 10px 28px;
   text-decoration: none;
+  border: none;
   border-radius: 26px;
   font-weight: 600;
   display: inline-block;
+  cursor: pointer;
   transition: 0.2s ease-in-out;
 }
 
@@ -407,10 +413,14 @@ h1, h2, h3, h4, h5 {
   background-color: var(--color-button-green);
   color: var(--color-primary-dark);
   padding: 12px 28px;
+  border: none;
   border-radius: 30px;
   text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 15px;
   font-weight: 600;
   margin-top: 18px;
+  cursor: pointer;
   transition: 0.3s ease;
 }
 

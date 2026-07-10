@@ -11,9 +11,12 @@ import paso2 from "../assets/Paso_2.png";
 import paso3 from "../assets/Paso_3.png";
 import curva1 from "../assets/curva1.png";
 import curva2 from "../assets/curva2.png";
+import { useAgendaModal } from "../context/AgendaModalContext";
 
 
 function Home() {
+  const { openModal } = useAgendaModal();
+
   useEffect(() => {
     document.title = "Psicoterapia La Montaña";
   }, []);
@@ -50,9 +53,9 @@ function Home() {
                 <strong> especialista indicado</strong> para tu motivo de consulta.
               </p>
 
-              <a className="hero-btn" href="#agendar">
+              <button className="hero-btn" onClick={openModal}>
                 Agenda tu primera sesión
-              </a>
+              </button>
             </div>
           </div>
 
@@ -102,9 +105,9 @@ function Home() {
           </div>
 
           {/* BOTÓN */}
-          <a href="#agendar" className="history-btn">
+          <button className="history-btn" onClick={openModal}>
             Agenda tu primera sesión
-          </a>
+          </button>
         </div>
       </div>
       {/* ============================
@@ -148,7 +151,12 @@ function Home() {
 
           </div>
 
-          <a href="#contacto" className="process-btn">
+          <a
+            href="https://wa.me/525539206004?text=Vengo%20de%20la%20p%C3%A1gina%20web%2C%20me%20gustar%C3%ADa%20que%20me%20atendiera%20una%20canalizadora"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="process-btn"
+          >
             Hablar con una canalizadora
           </a>
 
@@ -188,9 +196,9 @@ function Home() {
             <strong>vivir con claridad.</strong>
           </p>
 
-          <a href="#agendar" className="btn-terapeutas-bottom">
+          <button className="btn-terapeutas-bottom" onClick={openModal}>
             Agenda tu cita hoy
-          </a>
+          </button>
         </div>
 
       </section>

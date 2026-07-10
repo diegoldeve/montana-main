@@ -4,8 +4,11 @@ import cursoBienvenidaIcon from "../assets/Curso_bienvenida.png";
 import accesoBibliotecaIcon from "../assets/Acceso_biblioteca.png";
 import beneficiosPreferencialesIcon from "../assets/Beneficios_preferenciales.png";
 import preventasExclusivasIcon from "../assets/Preventas_exclusivas.png";
+import { useAgendaModal } from "../context/AgendaModalContext";
 
 function Beneficios() {
+  const { openModal } = useAgendaModal();
+
   return (
     <section className="beneficios-section">
   <div className="beneficios-bg-line"></div>
@@ -18,7 +21,7 @@ function Beneficios() {
         Descubre los beneficios que tendrás por ser consultante de La Montaña
       </h2>
 
-      <button className="beneficios-btn">Agenda tu sesión en línea</button>
+      <button className="beneficios-btn" onClick={openModal}>Agenda tu sesión en línea</button>
     </div>
 
     <div className="beneficios-right">

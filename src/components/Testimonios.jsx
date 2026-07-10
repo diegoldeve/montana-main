@@ -1,7 +1,9 @@
 import "../style/testimonios.css";
 import iconQuote from "../assets/gotas.png"; // ← tu icono de comillas
+import { useAgendaModal } from "../context/AgendaModalContext";
 
 function Testimonios() {
+  const { openModal } = useAgendaModal();
 
   const testimonios = [
     {
@@ -54,7 +56,7 @@ function Testimonios() {
 
       {/* BOTÓN */}
       <div className="btn-wrapper">
-        <button className="btn-proceso">Empezar mi proceso</button>
+        <button className="btn-proceso" onClick={openModal}>Empezar mi proceso</button>
       </div>
 
     </section>

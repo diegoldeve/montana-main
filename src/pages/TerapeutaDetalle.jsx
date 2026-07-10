@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import defaultAvatar from "../assets/t1.png";
 import { API_URL } from "../config/api";
+import { useAgendaModal } from "../context/AgendaModalContext";
 
 function TerapeutaDetalle() {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const { openModal } = useAgendaModal();
 
   const [t, setT] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -229,7 +231,7 @@ function TerapeutaDetalle() {
               ayudaremos a encontrar al terapeuta que mejor se adapte a tus
               necesidades.
             </p>
-            <button className="therapist-detail-cta-button">
+            <button className="therapist-detail-cta-button" onClick={openModal}>
               Agenda tu sesión en línea
             </button>
           </div>

@@ -7,6 +7,7 @@ import TerapeutaDetalle from "./pages/TerapeutaDetalle";
 import AdminFormulario from "./pages/AdminFormulario";
 import ScrollToTop from "./components/ScrollToTop";
 import { Helmet } from "react-helmet";
+import { AgendaModalProvider } from "./context/AgendaModalContext";
 
 function App() {
   return (
@@ -18,14 +19,16 @@ function App() {
         />
       </Helmet>
     <Router>
-      <ScrollToTop />         
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/nosotros" element={<Nosotros />} />
-        <Route path="/terapeutas" element={<Terapeutas />} />
-        <Route path="/terapeutas/:id" element={<TerapeutaDetalle />} />
-        <Route path="/admin/formulario" element={<AdminFormulario />} />
-      </Routes>
+      <ScrollToTop />
+      <AgendaModalProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/nosotros" element={<Nosotros />} />
+          <Route path="/terapeutas" element={<Terapeutas />} />
+          <Route path="/terapeutas/:id" element={<TerapeutaDetalle />} />
+          <Route path="/admin/formulario" element={<AdminFormulario />} />
+        </Routes>
+      </AgendaModalProvider>
     </Router>
     </>
   );

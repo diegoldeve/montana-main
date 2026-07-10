@@ -5,8 +5,10 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import defaultAvatar from "../assets/t1.png";
 import { API_URL } from "../config/api";
+import { useAgendaModal } from "../context/AgendaModalContext";
 
 function Terapeutas() {
+  const { openModal } = useAgendaModal();
   const [therapists, setTherapists] = useState([]);
   const [q, setQ] = useState("");
   const [cursor, setCursor] = useState(null);
@@ -185,7 +187,7 @@ function Terapeutas() {
               ayudaremos a encontrar al terapeuta que mejor se adapte a tus
               necesidades.
             </p>
-            <button className="therapists-cta-button">
+            <button className="therapists-cta-button" onClick={openModal}>
               Agenda tu sesión en línea
             </button>
           </div>
