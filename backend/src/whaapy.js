@@ -1,0 +1,63 @@
+import 'dotenv/config'
+
+const WHAAPY_API_URL = 'https://api.whaapy.com'
+const TAG_SITIO_WEB = 'sitio web'
+
+async function whaapyFetch(path, options = {}) {
+  const res = await fetch(`${WHAAPY_API_URL}${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${process.env.WHAAPY_API_KEY}`,
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+  const data = await res.json().catch(() => null)
+  return { ok: res.ok, status: res.status, data }
+}
+
+export function normalizePhoneE164(raw) {
+  const digits = raw.replace(/[^\d+]/g, '')
+  return digits.startsWith('+') ? digits : `+${digits}`
+}
+
+export async function syncContactoSitioWeb({ phone_number, name }) {
+  const search = await whaapyFetch('/contacts/v1/search', {
+    method: 'POST',
+    body: JSON.stringify({
+      filters: { phone_number: { eq: phone_number } },
+      limit: 1,
+    }),
+  })
+
+  if (!search.ok) {
+    throw new Error(`Whaapy search failed: ${search.status} ${JSON.stringify(search.data)}`)
+  }
+
+  const existente = search.data?.contacts?.[0]
+
+  if (existente) {
+    const update = await whaapyFetch(`/contacts/v1/${existente.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ add_tags: [TAG_SITIO_WEB] }),
+    })
+    if (!update.ok) {
+      throw new Error(`Whaapy update failed: ${update.status} ${JSON.stringify(update.data)}`)
+    }
+    return update.data.contact
+  }
+
+  const create = await whaapyFetch('/contacts/v1', {
+    method: 'POST',
+    body: JSON.stringify({
+      phone_number,
+      name,
+      tags: [TAG_SITIO_WEB],
+      source: 'api',
+    }),
+  })
+  if (!create.ok) {
+    throw new Error(`Whaapy create failed: ${create.status} ${JSON.stringify(create.data)}`)
+  }
+  return create.data.contact
+}

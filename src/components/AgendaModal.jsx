@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../style/AgendaModal.css";
 import { API_URL } from "../config/api";
+import { COUNTRIES, FEATURED_COUNT, isoToFlagEmoji } from "../data/dialCodes";
 
 const TIPOS_TERAPIA = ["Individual", "Adolescentes", "Niña/Niño", "Pareja", "Familiar", "Otro"];
 
@@ -17,6 +18,7 @@ const initialForm = {
   nombre: "",
   apellido: "",
   edad: "",
+  codigoPais: "+52",
   telefono: "",
   email: "",
   pais: "",
@@ -70,10 +72,11 @@ function AgendaModal({ isOpen, onClose }) {
     setEnviando(true);
 
     try {
+      const telefonoCompleto = `${form.codigoPais}${form.telefono.replace(/\D/g, "")}`;
       const res = await fetch(`${API_URL}/api/solicitudes-agenda`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, telefono: telefonoCompleto }),
       });
 
       if (!res.ok) throw new Error("HTTP " + res.status);
@@ -123,52 +126,75 @@ function AgendaModal({ isOpen, onClose }) {
             </p>
 
             <form className="agenda-modal-form" onSubmit={handleSubmit}>
-              <div className="agenda-modal-row">
-                <div className="agenda-modal-field">
-                  <label htmlFor="nombre">Nombre</label>
-                  <input
-                    id="nombre"
-                    name="nombre"
-                    type="text"
-                    value={form.nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="agenda-modal-field">
-                  <label htmlFor="apellido">Apellido</label>
-                  <input
-                    id="apellido"
-                    name="apellido"
-                    type="text"
-                    value={form.apellido}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              <div className="agenda-modal-field">
+                <label htmlFor="nombre">Nombre</label>
+                <input
+                  id="nombre"
+                  name="nombre"
+                  type="text"
+                  value={form.nombre}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
-              <div className="agenda-modal-row">
-                <div className="agenda-modal-field">
-                  <label htmlFor="edad">Edad</label>
-                  <input
-                    id="edad"
-                    name="edad"
-                    type="number"
-                    min="0"
-                    value={form.edad}
+              <div className="agenda-modal-field">
+                <label htmlFor="apellido">Apellido</label>
+                <input
+                  id="apellido"
+                  name="apellido"
+                  type="text"
+                  value={form.apellido}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="agenda-modal-field">
+                <label htmlFor="edad">Edad</label>
+                <input
+                  id="edad"
+                  name="edad"
+                  type="number"
+                  min="0"
+                  value={form.edad}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="agenda-modal-field">
+                <label htmlFor="telefono">Teléfono</label>
+                <div className="agenda-modal-phone-group">
+                  <select
+                    name="codigoPais"
+                    value={form.codigoPais}
                     onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="agenda-modal-field">
-                  <label htmlFor="telefono">Teléfono</label>
+                    aria-label="Código de país"
+                  >
+                    <optgroup label="Más comunes">
+                      {COUNTRIES.slice(0, FEATURED_COUNT).map((c) => (
+                        <option key={c.iso2} value={c.dialCode}>
+                          {isoToFlagEmoji(c.iso2)} {c.dialCode}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Todos los países">
+                      {COUNTRIES.slice(FEATURED_COUNT).map((c) => (
+                        <option key={c.iso2} value={c.dialCode}>
+                          {isoToFlagEmoji(c.iso2)} {c.name} {c.dialCode}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
                   <input
                     id="telefono"
                     name="telefono"
                     type="tel"
+                    inputMode="numeric"
                     value={form.telefono}
                     onChange={handleChange}
+                    minLength={5}
                     required
                   />
                 </div>
@@ -186,29 +212,28 @@ function AgendaModal({ isOpen, onClose }) {
                 />
               </div>
 
-              <div className="agenda-modal-row">
-                <div className="agenda-modal-field">
-                  <label htmlFor="pais">País</label>
-                  <input
-                    id="pais"
-                    name="pais"
-                    type="text"
-                    value={form.pais}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="agenda-modal-field">
-                  <label htmlFor="ciudad">Ciudad</label>
-                  <input
-                    id="ciudad"
-                    name="ciudad"
-                    type="text"
-                    value={form.ciudad}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              <div className="agenda-modal-field">
+                <label htmlFor="pais">País</label>
+                <input
+                  id="pais"
+                  name="pais"
+                  type="text"
+                  value={form.pais}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="agenda-modal-field">
+                <label htmlFor="ciudad">Ciudad</label>
+                <input
+                  id="ciudad"
+                  name="ciudad"
+                  type="text"
+                  value={form.ciudad}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <fieldset className="agenda-modal-fieldset">

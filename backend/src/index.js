@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { pool } from './db.js'
+import { syncContactoSitioWeb, normalizePhoneE164 } from './whaapy.js'
 
 const app = express()
 
@@ -64,6 +65,11 @@ app.post("/api/solicitudes-agenda", async (req, res) => {
         pais.trim(), ciudad.trim(), tipoTerapia, motivo.trim(), expectativas.trim(), inversion,
       ]
     );
+
+    syncContactoSitioWeb({
+      phone_number: normalizePhoneE164(telefono.trim()),
+      name: `${nombre.trim()} ${apellido.trim()}`,
+    }).catch((err) => console.error("Whaapy sync error:", err.message));
 
     res.status(201).json(rows[0]);
   } catch (e) {
