@@ -135,12 +135,41 @@
   font-family: var(--font-body);
   cursor: pointer;
   transition: 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .agenda-modal-btn:hover {
   background-color: var(--color-yellow);
   color: var(--color-primary-dark);
   transform: translateY(-2px);
+}
+
+.agenda-modal-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.agenda-modal-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: agenda-modal-spin 0.8s linear infinite;
+}
+
+@keyframes agenda-modal-spin {
+  to { transform: rotate(360deg); }
+}
+
+.agenda-modal-error {
+  color: #b3261e;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
 }
 
 .agenda-modal-gracias {

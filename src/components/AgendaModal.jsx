@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../style/AgendaModal.css";
+import { API_URL } from "../config/api";
 
 const TIPOS_TERAPIA = ["Individual", "Adolescentes", "Niña/Niño", "Pareja", "Familiar", "Otro"];
 
@@ -29,6 +30,8 @@ const initialForm = {
 function AgendaModal({ isOpen, onClose }) {
   const [form, setForm] = useState(initialForm);
   const [enviado, setEnviado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!isOpen) return;
@@ -57,12 +60,31 @@ function AgendaModal({ isOpen, onClose }) {
   const handleClose = () => {
     setForm(initialForm);
     setEnviado(false);
+    setError("");
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setEnviado(true);
+    setError("");
+    setEnviando(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/solicitudes-agenda`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) throw new Error("HTTP " + res.status);
+
+      setEnviado(true);
+    } catch (err) {
+      console.error(err);
+      setError("No pudimos enviar tu solicitud. Intenta de nuevo.");
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -253,8 +275,11 @@ function AgendaModal({ isOpen, onClose }) {
                 </div>
               </fieldset>
 
-              <button type="submit" className="agenda-modal-btn">
-                Enviar solicitud
+              {error && <p className="agenda-modal-error">{error}</p>}
+
+              <button type="submit" className="agenda-modal-btn" disabled={enviando}>
+                {enviando && <span className="agenda-modal-spinner" aria-hidden="true" />}
+                {enviando ? "Enviando…" : "Enviar solicitud"}
               </button>
             </form>
           </>

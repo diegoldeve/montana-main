@@ -1,76 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../style/AdminFormulario.css";
+import { API_URL } from "../config/api";
 
 const ADMIN_PASSWORD = "Canalizadoras123";
-
-const dummyData = [
-  {
-    nombre: "María",
-    apellido: "González",
-    correo: "maria.gonzalez@example.com",
-    numero: "55 1234 5678",
-    ciudad: "Ciudad de México",
-    pais: "México",
-    tipoTerapia: "Terapia individual",
-    inversion: "$800 - $1,200 MXN",
-  },
-  {
-    nombre: "Luis",
-    apellido: "Martínez",
-    correo: "luis.martinez@example.com",
-    numero: "33 9876 5432",
-    ciudad: "Guadalajara",
-    pais: "México",
-    tipoTerapia: "Terapia de pareja",
-    inversion: "$1,000 - $1,500 MXN",
-  },
-  {
-    nombre: "Andrea",
-    apellido: "Ramírez",
-    correo: "andrea.ramirez@example.com",
-    numero: "81 2345 6789",
-    ciudad: "Monterrey",
-    pais: "México",
-    tipoTerapia: "Terapia familiar",
-    inversion: "$1,200 - $1,800 MXN",
-  },
-  {
-    nombre: "Carlos",
-    apellido: "Fernández",
-    correo: "carlos.fernandez@example.com",
-    numero: "222 111 2233",
-    ciudad: "Puebla",
-    pais: "México",
-    tipoTerapia: "Terapia individual",
-    inversion: "$600 - $900 MXN",
-  },
-  {
-    nombre: "Paola",
-    apellido: "Sánchez",
-    correo: "paola.sanchez@example.com",
-    numero: "998 765 4321",
-    ciudad: "Cancún",
-    pais: "México",
-    tipoTerapia: "Terapia de duelo",
-    inversion: "$900 - $1,300 MXN",
-  },
-  {
-    nombre: "Diego",
-    apellido: "Torres",
-    correo: "diego.torres@example.com",
-    numero: "614 333 2211",
-    ciudad: "Chihuahua",
-    pais: "México",
-    tipoTerapia: "Terapia individual",
-    inversion: "$700 - $1,000 MXN",
-  },
-];
 
 function AdminFormulario() {
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
+  const [solicitudes, setSolicitudes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
       setAuthenticated(true);
@@ -79,10 +20,36 @@ function AdminFormulario() {
     }
   };
 
+  useEffect(() => {
+    if (!authenticated) return;
+
+    async function load() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await fetch(`${API_URL}/api/solicitudes-agenda`, {
+          headers: { "x-admin-key": password },
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
+        const json = await res.json();
+        setSolicitudes(Array.isArray(json.data) ? json.data : []);
+      } catch (e) {
+        console.error(e);
+        setError("No se pudieron cargar las solicitudes.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [authenticated, password]);
+
   if (!authenticated) {
     return (
       <section className="admin-login-section">
-        <form className="admin-login-box" onSubmit={handleSubmit}>
+        <form className="admin-login-box" onSubmit={handleLogin}>
           <h1>Acceso administrador</h1>
           <input
             type="password"
@@ -100,36 +67,54 @@ function AdminFormulario() {
   return (
     <section className="admin-dashboard-section">
       <h1>Formularios recibidos</h1>
-      <div className="admin-table-wrapper">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Correo</th>
-              <th>Número</th>
-              <th>Ciudad</th>
-              <th>País</th>
-              <th>Tipo de terapia</th>
-              <th>Cuánto puede invertir</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dummyData.map((row, i) => (
-              <tr key={i}>
-                <td>{row.nombre}</td>
-                <td>{row.apellido}</td>
-                <td>{row.correo}</td>
-                <td>{row.numero}</td>
-                <td>{row.ciudad}</td>
-                <td>{row.pais}</td>
-                <td>{row.tipoTerapia}</td>
-                <td>{row.inversion}</td>
+
+      {error && <p>{error}</p>}
+
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center", padding: "40px 0" }}>
+          <div className="admin-spinner" aria-label="Cargando solicitudes" />
+        </div>
+      ) : (
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Edad</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Ciudad</th>
+                <th>País</th>
+                <th>Tipo de terapia</th>
+                <th>Motivo de consulta</th>
+                <th>Expectativas</th>
+                <th>Inversión</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {solicitudes.map((s) => (
+                <tr key={s.id}>
+                  <td>{new Date(s.created_at).toLocaleString("es-MX")}</td>
+                  <td>{s.nombre}</td>
+                  <td>{s.apellido}</td>
+                  <td>{s.edad}</td>
+                  <td>{s.email}</td>
+                  <td>{s.telefono}</td>
+                  <td>{s.ciudad}</td>
+                  <td>{s.pais}</td>
+                  <td>{s.tipo_terapia}</td>
+                  <td>{s.motivo_consulta}</td>
+                  <td>{s.expectativas}</td>
+                  <td>{s.inversion}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {!solicitudes.length && <p>No hay solicitudes todavía.</p>}
+        </div>
+      )}
     </section>
   );
 }
