@@ -150,6 +150,13 @@
   cursor: pointer;
 }
 
+.agenda-modal-inversion-nota {
+  margin: 10px 0 0;
+  font-size: 12px;
+  font-style: italic;
+  color: #666;
+}
+
 .agenda-modal-btn {
   align-self: center;
   margin-top: 8px;

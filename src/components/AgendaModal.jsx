@@ -298,6 +298,11 @@ function AgendaModal({ isOpen, onClose }) {
                     </label>
                   ))}
                 </div>
+                <p className="agenda-modal-inversion-nota">
+                  *Los costos aquí mostrados son para terapias individuales. La
+                  terapia de pareja y familiar tiene un costo diferente,
+                  ¡consulta con tu canalizadora!
+                </p>
               </fieldset>
 
               {error && <p className="agenda-modal-error">{error}</p>}

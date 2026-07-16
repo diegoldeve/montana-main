@@ -51,7 +51,6 @@ function Nosotros() {
       <strong> más de 130 terapeutas</strong> de diversas corrientes y especialidades.
     </p>
 
-    <a className="nosotros-link" href="#conoce">Conoce más →</a>
 
   </div>
 

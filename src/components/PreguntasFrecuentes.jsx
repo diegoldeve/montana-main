@@ -65,7 +65,14 @@ function PreguntasFrecuentes() {
             nuestro equipo con gusto te ayudará.
           </p>
 
-          <button className="faq-btn">Contáctanos</button>
+          <a
+            href="https://wa.me/525539206004?text=Vengo%20de%20la%20p%C3%A1gina%20web%2C%20me%20gustar%C3%ADa%20que%20me%20atendiera%20una%20canalizadora"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="faq-btn"
+          >
+            Contáctanos
+          </a>
         </div>
       </div>
     </section>
