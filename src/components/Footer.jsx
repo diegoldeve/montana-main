@@ -25,13 +25,13 @@ function Footer() {
 
         {/* REDES SOCIALES */}
         <div className="footer-socials">
-          <a href="#" aria-label="Facebook">
+          <a href="https://www.instagram.com/lamontana.mx/" aria-label="Facebook">
             <img src={facebookIcon} alt="Facebook" />
           </a>
-          <a href="#" aria-label="Instagram">
+          <a href="https://www.instagram.com/lamontana.mx/" aria-label="Instagram">
             <img src={instagramIcon} alt="Instagram" />
           </a>
-          <a href="#" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/in/tere-d%C3%ADaz-sendra-a9a7801b/" aria-label="LinkedIn">
             <img src={linkedinIcon} alt="LinkedIn" />
           </a>
         </div>
