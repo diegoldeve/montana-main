@@ -25,7 +25,7 @@ function Footer() {
 
         {/* REDES SOCIALES */}
         <div className="footer-socials">
-          <a href="https://www.instagram.com/lamontana.mx/" aria-label="Facebook">
+          <a href="https://www.facebook.com/LaMontanaMx/?locale=es_LA" aria-label="Facebook">
             <img src={facebookIcon} alt="Facebook" />
           </a>
           <a href="https://www.instagram.com/lamontana.mx/" aria-label="Instagram">
