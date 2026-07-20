@@ -147,7 +147,7 @@ function Terapeutas() {
                       <article className="therapist-card">
                         <div className="therapist-image-wrapper">
                           <img
-                            src={defaultAvatar}
+                            src={t.foto_url || defaultAvatar}
                             alt={`Foto de ${name}`}
                           />
                         </div>

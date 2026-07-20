@@ -139,7 +139,7 @@ function TerapeutaDetalle() {
           {/* Tarjeta principal */}
           <div className="therapist-detail-card">
             <div className="therapist-detail-image-wrapper">
-              <img src={defaultAvatar} alt={`Foto de ${nombreCompleto}`} />
+              <img src={t.foto_url || defaultAvatar} alt={`Foto de ${nombreCompleto}`} />
             </div>
 
             <div className="therapist-detail-info">

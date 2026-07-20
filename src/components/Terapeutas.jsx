@@ -131,7 +131,7 @@ function Terapeutas() {
                   state={{ from: "/terapeutas", scrollY: window.scrollY }}
                 >
                   <img
-                    src={defaultAvatar}
+                    src={t.foto_url || defaultAvatar}
                     className="card-img"
                     alt={nombreCompleto}
                   />
