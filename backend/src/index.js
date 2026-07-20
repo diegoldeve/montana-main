@@ -115,14 +115,16 @@ app.get("/api/terapeutas/featured", async (req, res) => {
   try {
     const { rows } = await pool.query(`
       SELECT
-        id,
-        nombre,
-        apellido_paterno,
-        apellido_materno,
-        grado_academico AS formacion,
-        semblanza
-      FROM public.profesionales
-      ORDER BY id ASC
+        p.id,
+        p.nombre,
+        p.apellido_paterno,
+        p.apellido_materno,
+        p.grado_academico AS formacion,
+        p.semblanza,
+        f.foto_url
+      FROM public.profesionales p
+      LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
+      ORDER BY p.id ASC
       LIMIT 6
     `);
 
@@ -148,17 +150,17 @@ app.get("/api/terapeutas", async (req, res) => {
       params.push(q);
       where += `
         AND (
-          nombre ILIKE '%' || $${params.length} || '%' OR
-          apellido_paterno ILIKE '%' || $${params.length} || '%' OR
-          apellido_materno ILIKE '%' || $${params.length} || '%' OR
-          ciudad ILIKE '%' || $${params.length} || '%'
+          p.nombre ILIKE '%' || $${params.length} || '%' OR
+          p.apellido_paterno ILIKE '%' || $${params.length} || '%' OR
+          p.apellido_materno ILIKE '%' || $${params.length} || '%' OR
+          p.ciudad ILIKE '%' || $${params.length} || '%'
         )
       `;
     }
 
     if (cursor) {
       params.push(cursor);
-      where += ` AND id > $${params.length} `;
+      where += ` AND p.id > $${params.length} `;
     }
 
     params.push(limit);
@@ -166,18 +168,20 @@ app.get("/api/terapeutas", async (req, res) => {
     const { rows } = await pool.query(
       `
       SELECT
-        id,
-        nombre,
-        apellido_paterno,
-        apellido_materno,
-        ciudad,
-        pais,
-        modalidad,
-        idiomas,
-        grado_academico AS formacion
-      FROM public.profesionales
+        p.id,
+        p.nombre,
+        p.apellido_paterno,
+        p.apellido_materno,
+        p.ciudad,
+        p.pais,
+        p.modalidad,
+        p.idiomas,
+        p.grado_academico AS formacion,
+        f.foto_url
+      FROM public.profesionales p
+      LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
       ${where}
-      ORDER BY id ASC
+      ORDER BY p.id ASC
       LIMIT $${params.length}
       `,
       params
@@ -200,23 +204,25 @@ app.get("/api/terapeutas/:id", async (req, res) => {
     const { rows } = await pool.query(
       `
       SELECT
-        id,
-        nombre,
-        apellido_paterno,
-        apellido_materno,
-        ciudad,
-        pais,
-        idiomas,
-        poblacion_atiende,
-        temas_trabaja,
-        modalidad,
-        modelo_trabajo AS enfoque,
-        experiencia,
-        grado_academico AS formacion,
-        cedula,
-        semblanza
-      FROM public.profesionales
-      WHERE id = $1
+        p.id,
+        p.nombre,
+        p.apellido_paterno,
+        p.apellido_materno,
+        p.ciudad,
+        p.pais,
+        p.idiomas,
+        p.poblacion_atiende,
+        p.temas_trabaja,
+        p.modalidad,
+        p.modelo_trabajo AS enfoque,
+        p.experiencia,
+        p.grado_academico AS formacion,
+        p.cedula,
+        p.semblanza,
+        f.foto_url
+      FROM public.profesionales p
+      LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
+      WHERE p.id = $1
       LIMIT 1
       `,
       [id]
