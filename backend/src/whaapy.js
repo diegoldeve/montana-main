@@ -21,6 +21,11 @@ export function normalizePhoneE164(raw) {
   return digits.startsWith('+') ? digits : `+${digits}`
 }
 
+const TEMPLATE_FORMULARIO = 'formulario_pagina'
+const TAG_DELAY_MS = 5000
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 export async function syncContactoSitioWeb({ phone_number, name }) {
   const search = await whaapyFetch('/contacts/v1/search', {
     method: 'POST',
@@ -34,30 +39,43 @@ export async function syncContactoSitioWeb({ phone_number, name }) {
     throw new Error(`Whaapy search failed: ${search.status} ${JSON.stringify(search.data)}`)
   }
 
-  const existente = search.data?.contacts?.[0]
+  let contact = search.data?.contacts?.[0]
 
-  if (existente) {
-    const update = await whaapyFetch(`/contacts/v1/${existente.id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ add_tags: [TAG_SITIO_WEB] }),
+  if (!contact) {
+    const create = await whaapyFetch('/contacts/v1', {
+      method: 'POST',
+      body: JSON.stringify({
+        phone_number,
+        name,
+        source: 'api',
+      }),
     })
-    if (!update.ok) {
-      throw new Error(`Whaapy update failed: ${update.status} ${JSON.stringify(update.data)}`)
+    if (!create.ok) {
+      throw new Error(`Whaapy create failed: ${create.status} ${JSON.stringify(create.data)}`)
     }
-    return update.data.contact
+    contact = create.data.contact
   }
 
-  const create = await whaapyFetch('/contacts/v1', {
+  const send = await whaapyFetch('/messages/v1', {
     method: 'POST',
     body: JSON.stringify({
-      phone_number,
-      name,
-      tags: [TAG_SITIO_WEB],
-      source: 'api',
+      to: phone_number,
+      type: 'template',
+      templateName: TEMPLATE_FORMULARIO,
     }),
   })
-  if (!create.ok) {
-    throw new Error(`Whaapy create failed: ${create.status} ${JSON.stringify(create.data)}`)
+  if (!send.ok) {
+    console.error(`Whaapy template send failed: ${send.status} ${JSON.stringify(send.data)}`)
   }
-  return create.data.contact
+
+  await sleep(TAG_DELAY_MS)
+
+  const update = await whaapyFetch(`/contacts/v1/${contact.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ add_tags: [TAG_SITIO_WEB] }),
+  })
+  if (!update.ok) {
+    throw new Error(`Whaapy tag failed: ${update.status} ${JSON.stringify(update.data)}`)
+  }
+  return update.data.contact
 }
