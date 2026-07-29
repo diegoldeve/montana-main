@@ -124,7 +124,7 @@ app.get("/api/terapeutas/featured", async (req, res) => {
         f.foto_url
       FROM public.profesionales p
       LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
-      ORDER BY p.id ASC
+      ORDER BY (f.foto_url IS NOT NULL)::int DESC, p.id ASC
       LIMIT 6
     `);
 
@@ -141,7 +141,19 @@ app.get("/api/terapeutas", async (req, res) => {
   try {
     const q = (req.query.q ?? "").toString().trim();
     const limit = Math.min(parseInt(req.query.limit ?? "20", 10), 50);
-    const cursor = req.query.cursor ? Number(req.query.cursor) : null;
+
+    // cursor compuesto "tieneFoto_id" porque el orden es foto-primero y luego id
+    let cursorFoto = null;
+    let cursorId = null;
+    if (req.query.cursor) {
+      const [f, i] = String(req.query.cursor).split("_");
+      cursorFoto = Number(f);
+      cursorId = Number(i);
+      if (!Number.isFinite(cursorFoto) || !Number.isFinite(cursorId)) {
+        cursorFoto = null;
+        cursorId = null;
+      }
+    }
 
     const params = [];
     let where = "WHERE 1=1";
@@ -158,9 +170,17 @@ app.get("/api/terapeutas", async (req, res) => {
       `;
     }
 
-    if (cursor) {
-      params.push(cursor);
-      where += ` AND p.id > $${params.length} `;
+    if (cursorId !== null) {
+      params.push(cursorFoto);
+      const pFoto = params.length;
+      params.push(cursorId);
+      const pId = params.length;
+      where += `
+        AND (
+          (f.foto_url IS NOT NULL)::int < $${pFoto}
+          OR ((f.foto_url IS NOT NULL)::int = $${pFoto} AND p.id > $${pId})
+        )
+      `;
     }
 
     params.push(limit);
@@ -181,13 +201,14 @@ app.get("/api/terapeutas", async (req, res) => {
       FROM public.profesionales p
       LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
       ${where}
-      ORDER BY p.id ASC
+      ORDER BY (f.foto_url IS NOT NULL)::int DESC, p.id ASC
       LIMIT $${params.length}
       `,
       params
     );
 
-    const nextCursor = rows.length ? rows[rows.length - 1].id : null;
+    const last = rows[rows.length - 1];
+    const nextCursor = rows.length ? `${last.foto_url ? 1 : 0}_${last.id}` : null;
     res.json({ data: rows, nextCursor });
   } catch (e) {
     console.error(e);
