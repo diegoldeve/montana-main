@@ -2,6 +2,7 @@ import 'dotenv/config'
 
 const WHAAPY_API_URL = 'https://api.whaapy.com'
 const TAG_SITIO_WEB = 'sitio web'
+const FUNNEL_STAGE_FORMULARIO_WEB = '448d08ba-b5f5-4025-80f5-881ab84a3a1f'
 
 async function whaapyFetch(path, options = {}) {
   const res = await fetch(`${WHAAPY_API_URL}${path}`, {
@@ -72,7 +73,10 @@ export async function syncContactoSitioWeb({ phone_number, name }) {
 
   const update = await whaapyFetch(`/contacts/v1/${contact.id}`, {
     method: 'PATCH',
-    body: JSON.stringify({ add_tags: [TAG_SITIO_WEB] }),
+    body: JSON.stringify({
+      add_tags: [TAG_SITIO_WEB],
+      funnel_stage_id: FUNNEL_STAGE_FORMULARIO_WEB,
+    }),
   })
   if (!update.ok) {
     throw new Error(`Whaapy tag failed: ${update.status} ${JSON.stringify(update.data)}`)
