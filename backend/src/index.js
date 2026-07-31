@@ -70,7 +70,15 @@ app.post("/api/solicitudes-agenda", async (req, res) => {
       phone_number: normalizePhoneE164(telefono.trim()),
       name: `${nombre.trim()} ${apellido.trim()}`,
       rotationSeed: rows[0].id,
-    }).catch((err) => console.error("Whaapy sync error:", err.message));
+    })
+      .then(({ agenteNombre }) => {
+        if (!agenteNombre) return;
+        return pool.query(
+          "UPDATE public.solicitudes_agenda SET agente_asignado = $1 WHERE id = $2",
+          [agenteNombre, rows[0].id]
+        );
+      })
+      .catch((err) => console.error("Whaapy sync error:", err.message));
 
     res.status(201).json(rows[0]);
   } catch (e) {
@@ -102,12 +110,19 @@ app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
         )
       `;
     }
+    const agente = (req.query.agente ?? "").toString().trim();
+    if (agente === "sin") {
+      where += " AND agente_asignado IS NULL";
+    } else if (agente) {
+      params.push(agente);
+      where += ` AND agente_asignado ILIKE $${params.length}`;
+    }
     params.push(limit);
 
     const { rows } = await pool.query(
       `
       SELECT id, nombre, apellido, edad, telefono, email, pais, ciudad,
-             tipo_terapia, motivo_consulta, expectativas, inversion, created_at
+             tipo_terapia, motivo_consulta, expectativas, inversion, agente_asignado, created_at
       FROM public.solicitudes_agenda
       ${where}
       ORDER BY id DESC

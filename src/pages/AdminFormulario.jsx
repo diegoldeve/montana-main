@@ -4,11 +4,14 @@ import { API_URL } from "../config/api";
 
 const ADMIN_PASSWORD = "Canalizadoras123";
 
+const TERAPEUTAS = ["Sharon", "Monserrat", "Claudia", "Berenice"];
+
 // El backend en Railway puede tardar en responder si la conexión a la base
 // se quedó muerta; cada intento tiene timeout y se reintenta hasta 3 veces.
-async function fetchSolicitudes({ apiKey, q, signal }) {
+async function fetchSolicitudes({ apiKey, q, agente, signal }) {
   const params = new URLSearchParams();
   if (q) params.set("q", q);
+  if (agente) params.set("agente", agente);
   const qs = params.toString();
   const url = `${API_URL}/api/solicitudes-agenda${qs ? `?${qs}` : ""}`;
 
@@ -43,6 +46,7 @@ function AdminFormulario() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [agente, setAgente] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
 
   const handleLogin = (e) => {
@@ -65,6 +69,7 @@ function AdminFormulario() {
         const json = await fetchSolicitudes({
           apiKey: password,
           q: query.trim(),
+          agente,
           signal: controller.signal,
         });
         setSolicitudes(Array.isArray(json.data) ? json.data : []);
@@ -81,7 +86,7 @@ function AdminFormulario() {
       clearTimeout(debounce);
       controller.abort();
     };
-  }, [authenticated, password, query, reloadKey]);
+  }, [authenticated, password, query, agente, reloadKey]);
 
   if (!authenticated) {
     return (
@@ -113,6 +118,19 @@ function AdminFormulario() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        <select
+          className="admin-select"
+          value={agente}
+          onChange={(e) => setAgente(e.target.value)}
+        >
+          <option value="">Todas las terapeutas</option>
+          {TERAPEUTAS.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+          <option value="sin">Sin asignar</option>
+        </select>
       </div>
 
       {error && (
@@ -137,6 +155,7 @@ function AdminFormulario() {
                   <th>Fecha</th>
                   <th>Nombre</th>
                   <th>Apellido</th>
+                  <th>Terapeuta</th>
                   <th>Edad</th>
                   <th>Correo</th>
                   <th>Teléfono</th>
@@ -154,6 +173,7 @@ function AdminFormulario() {
                     <td>{new Date(s.created_at).toLocaleString("es-MX")}</td>
                     <td>{s.nombre}</td>
                     <td>{s.apellido}</td>
+                    <td>{s.agente_asignado || "—"}</td>
                     <td>{s.edad}</td>
                     <td>{s.email}</td>
                     <td>{s.telefono}</td>
