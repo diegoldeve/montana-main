@@ -69,6 +69,7 @@ app.post("/api/solicitudes-agenda", async (req, res) => {
     syncContactoSitioWeb({
       phone_number: normalizePhoneE164(telefono.trim()),
       name: `${nombre.trim()} ${apellido.trim()}`,
+      rotationSeed: rows[0].id,
     }).catch((err) => console.error("Whaapy sync error:", err.message));
 
     res.status(201).json(rows[0]);

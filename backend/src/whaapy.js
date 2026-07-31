@@ -4,6 +4,14 @@ const WHAAPY_API_URL = 'https://api.whaapy.com'
 const TAG_SITIO_WEB = 'sitio web'
 const FUNNEL_STAGE_FORMULARIO_WEB = '448d08ba-b5f5-4025-80f5-881ab84a3a1f'
 
+// Rotación round robin para asignar agente (GET /team/v1)
+const AGENTES_ROUND_ROBIN = [
+  '5225d34b-df2d-43ae-8240-2b384b904e7e', // Sharon
+  'ecffcdfb-a38e-49ff-80cd-a09fe0018f82', // Monserrat
+  '1ace76ee-1c4d-4eaa-a38a-9c8ec2ec3f59', // Claudia
+  'c361a82e-7b48-4e01-aaa5-27038e612539', // Berenice
+]
+
 async function whaapyFetch(path, options = {}) {
   const res = await fetch(`${WHAAPY_API_URL}${path}`, {
     ...options,
@@ -27,7 +35,7 @@ const TAG_DELAY_MS = 5000
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export async function syncContactoSitioWeb({ phone_number, name }) {
+export async function syncContactoSitioWeb({ phone_number, name, rotationSeed }) {
   const search = await whaapyFetch('/contacts/v1/search', {
     method: 'POST',
     body: JSON.stringify({
@@ -76,6 +84,7 @@ export async function syncContactoSitioWeb({ phone_number, name }) {
     body: JSON.stringify({
       add_tags: [TAG_SITIO_WEB],
       funnel_stage_id: FUNNEL_STAGE_FORMULARIO_WEB,
+      assigned_agent_id: AGENTES_ROUND_ROBIN[Math.abs(rotationSeed ?? 0) % AGENTES_ROUND_ROBIN.length],
     }),
   })
   if (!update.ok) {
