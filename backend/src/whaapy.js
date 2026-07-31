@@ -79,13 +79,19 @@ export async function syncContactoSitioWeb({ phone_number, name, rotationSeed })
 
   await sleep(TAG_DELAY_MS)
 
+  const patchBody = {
+    add_tags: [TAG_SITIO_WEB],
+    funnel_stage_id: FUNNEL_STAGE_FORMULARIO_WEB,
+  }
+  // Solo asignar agente si el contacto no tiene uno ya asignado
+  if (!contact.assigned_agent_id) {
+    patchBody.assigned_agent_id =
+      AGENTES_ROUND_ROBIN[Math.abs(rotationSeed ?? 0) % AGENTES_ROUND_ROBIN.length]
+  }
+
   const update = await whaapyFetch(`/contacts/v1/${contact.id}`, {
     method: 'PATCH',
-    body: JSON.stringify({
-      add_tags: [TAG_SITIO_WEB],
-      funnel_stage_id: FUNNEL_STAGE_FORMULARIO_WEB,
-      assigned_agent_id: AGENTES_ROUND_ROBIN[Math.abs(rotationSeed ?? 0) % AGENTES_ROUND_ROBIN.length],
-    }),
+    body: JSON.stringify(patchBody),
   })
   if (!update.ok) {
     throw new Error(`Whaapy tag failed: ${update.status} ${JSON.stringify(update.data)}`)
