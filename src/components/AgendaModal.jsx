@@ -299,9 +299,7 @@ function AgendaModal({ isOpen, onClose }) {
                   ))}
                 </div>
                 <p className="agenda-modal-inversion-nota">
-                  *Los costos aquí mostrados son para terapias individuales. La
-                  terapia de pareja y familiar tiene un costo diferente,
-                  ¡consulta con tu canalizadora!
+*Los costos aquí mostrados son para terapias individuales. La terapia de pareja, familiar y las terapias fuera del territorio mexicano tienen un costo diferente, ¡consulta con tu canalizadora!
                 </p>
               </fieldset>
 

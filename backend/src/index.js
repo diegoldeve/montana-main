@@ -83,12 +83,24 @@ app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit ?? "50", 10), 100);
     const cursor = req.query.cursor ? Number(req.query.cursor) : null;
+    const q = (req.query.q ?? "").toString().trim();
 
     const params = [];
     let where = "WHERE 1=1";
     if (cursor) {
       params.push(cursor);
       where += ` AND id < $${params.length}`;
+    }
+    if (q) {
+      params.push(q);
+      where += `
+        AND (
+          nombre ILIKE '%' || $${params.length} || '%' OR
+          apellido ILIKE '%' || $${params.length} || '%' OR
+          (nombre || ' ' || apellido) ILIKE '%' || $${params.length} || '%' OR
+          telefono ILIKE '%' || $${params.length} || '%'
+        )
+      `;
     }
     params.push(limit);
 
