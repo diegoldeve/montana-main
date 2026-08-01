@@ -6,12 +6,8 @@ import { COUNTRIES, FEATURED_COUNT, isoToFlagEmoji } from "../data/dialCodes";
 const TIPOS_TERAPIA = ["Individual", "Adolescentes", "Niña/Niño", "Pareja", "Familiar", "Otro"];
 
 const INVERSION_OPTIONS = [
-  "$695.00",
-  "$775.00",
-  "$880.00",
-  "$985.00",
-  "$1,090.00",
-  "$1,195.00",
+  "Sí, quiero invertir en mi salud mental.",
+  "No, en este momento no está en mis posibilidades.",
 ];
 
 const initialForm = {
@@ -282,25 +278,26 @@ function AgendaModal({ isOpen, onClose }) {
               </div>
 
               <fieldset className="agenda-modal-fieldset">
-                <legend>¿Cuánto podrías invertir en una terapia?</legend>
-                <div className="agenda-modal-options">
-                  {INVERSION_OPTIONS.map((monto) => (
-                    <label key={monto} className="agenda-modal-radio">
+                <legend>
+                  Los costos de la terapia individual inician en $695 pesos y de
+                  la terapia de pareja en $850 pesos mexicanos por sesión,
+                  ¿estás de acuerdo con esta inversión?
+                </legend>
+                <div className="agenda-modal-options agenda-modal-options-stack">
+                  {INVERSION_OPTIONS.map((opcion) => (
+                    <label key={opcion} className="agenda-modal-radio">
                       <input
                         type="radio"
                         name="inversion"
-                        value={monto}
-                        checked={form.inversion === monto}
+                        value={opcion}
+                        checked={form.inversion === opcion}
                         onChange={handleChange}
                         required
                       />
-                      {monto}
+                      {opcion}
                     </label>
                   ))}
                 </div>
-                <p className="agenda-modal-inversion-nota">
-*Los costos aquí mostrados son para terapias individuales. La terapia de pareja, familiar y las terapias fuera del territorio mexicano tienen un costo diferente, ¡consulta con tu canalizadora!
-                </p>
               </fieldset>
 
               {error && <p className="agenda-modal-error">{error}</p>}
