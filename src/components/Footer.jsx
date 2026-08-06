@@ -4,7 +4,10 @@ import logoblanco from "../assets/logoblanco.png";
 import facebookIcon from "../assets/Facebook.png";
 import instagramIcon from "../assets/Instagram.png";
 import linkedinIcon from "../assets/LinkedIn.png";
+import { useAgendaModal } from "../context/AgendaModalContext";
 function Footer() {
+  const { openModal } = useAgendaModal();
+
   return (
     <footer className="footer-section">
       <div className="footer-top">
@@ -20,7 +23,15 @@ function Footer() {
         <nav className="footer-nav">
           <Link to="/nosotros">Sobre nosotros</Link>
           <Link to="/terapeutas">Nuestros terapeutas</Link>
-          <a href="#agenda">Agenda tu sesión</a>
+          <a
+            href="#agenda"
+            onClick={(e) => {
+              e.preventDefault();
+              openModal();
+            }}
+          >
+            Agenda tu sesión
+          </a>
         </nav>
 
         {/* REDES SOCIALES */}
