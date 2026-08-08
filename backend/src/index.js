@@ -16,7 +16,10 @@ app.use(cors({
 app.use(express.json())
 
 const TIPOS_TERAPIA = ["Individual", "Adolescentes", "Niña/Niño", "Pareja", "Familiar", "Otro"];
-const INVERSION_OPTIONS = ["$695.00", "$775.00", "$880.00", "$985.00", "$1,090.00", "$1,195.00"];
+const INVERSION_OPTIONS = [
+  "Sí, quiero invertir en mi salud mental.",
+  "No, en este momento no está en mis posibilidades.",
+];
 
 function requireAdminKey(req, res, next) {
   const key = req.get("x-admin-key");
