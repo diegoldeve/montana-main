@@ -6,6 +6,7 @@ import Terapeutas from "./pages/Terapeutas";
 import TerapeutaDetalle from "./pages/TerapeutaDetalle";
 import AdminFormulario from "./pages/AdminFormulario";
 import ScrollToTop from "./components/ScrollToTop";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 import { Helmet } from "react-helmet";
 import { AgendaModalProvider } from "./context/AgendaModalContext";
 
@@ -20,6 +21,7 @@ function App() {
       </Helmet>
     <Router>
       <ScrollToTop />
+      <AnalyticsTracker />
       <AgendaModalProvider>
         <Routes>
           <Route path="/" element={<Home />} />
