@@ -154,8 +154,9 @@ app.get("/api/terapeutas/featured", async (req, res) => {
         p.semblanza,
         f.foto_url
       FROM public.profesionales p
-      LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
-      ORDER BY (f.foto_url IS NOT NULL)::int DESC, p.id ASC
+      JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
+      WHERE f.foto_url IS NOT NULL
+      ORDER BY p.id ASC
       LIMIT 6
     `);
 
@@ -187,7 +188,7 @@ app.get("/api/terapeutas", async (req, res) => {
     }
 
     const params = [];
-    let where = "WHERE 1=1";
+    let where = "WHERE f.foto_url IS NOT NULL";
 
     if (q) {
       params.push(q);
@@ -230,7 +231,7 @@ app.get("/api/terapeutas", async (req, res) => {
         p.grado_academico AS formacion,
         f.foto_url
       FROM public.profesionales p
-      LEFT JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
+      JOIN public.terapeutas_fotos f ON f.id_terapeuta = p.id
       ${where}
       ORDER BY (f.foto_url IS NOT NULL)::int DESC, p.id ASC
       LIMIT $${params.length}
