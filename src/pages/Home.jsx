@@ -31,6 +31,8 @@ function Home() {
         <div className="hero-content">
 
           <h1 className="hero-title">
+            Psicoterapia en línea
+            <br />
             Transforma tu vida,
             <span className="highlight"> fortalece </span>
             tu bienestar y <br />
@@ -54,7 +56,7 @@ function Home() {
               </p>
 
               <button className="hero-btn" onClick={openModal}>
-                Agenda tu primera sesión
+                Agenda tu primera sesión de terapia en línea
               </button>
             </div>
           </div>
@@ -117,7 +119,7 @@ function Home() {
         <div className="process-content">
 
           <h2 className="process-title">
-            Empezar tu proceso es<br />sencillo:
+            Empezar tu proceso de terapia en línea es <br />sencillo:
           </h2>
 
           <div className="process-grid">
@@ -197,7 +199,7 @@ function Home() {
           </p>
 
           <button className="btn-terapeutas-bottom" onClick={openModal}>
-            Agenda tu cita hoy
+            Agenda tu cita de terapia hoy
           </button>
         </div>
 
