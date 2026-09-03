@@ -188,7 +188,7 @@ function Terapeutas() {
               necesidades.
             </p>
             <button className="therapists-cta-button" onClick={openModal}>
-              Agenda tu sesión en línea
+              Agenda tus sesiones de terapia en línea
             </button>
           </div>
         </div>

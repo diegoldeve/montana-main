@@ -232,7 +232,7 @@ function TerapeutaDetalle() {
               necesidades.
             </p>
             <button className="therapist-detail-cta-button" onClick={openModal}>
-              Agenda tu sesión en línea
+              Agenda tus sesiones de terapia en línea
             </button>
           </div>
         </div>
