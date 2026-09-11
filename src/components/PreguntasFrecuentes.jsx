@@ -1,4 +1,5 @@
 import "../style/preguntas.css";
+import { trackEvent } from "../lib/analytics";
 import Curva from "../assets/curva3.png"; // tu curva verde
 
 function PreguntasFrecuentes() {
@@ -70,6 +71,7 @@ function PreguntasFrecuentes() {
             target="_blank"
             rel="noopener noreferrer"
             className="faq-btn"
+            onClick={() => trackEvent("contacto_whatsapp", { origen: "faq" })}
           >
             Contáctanos
           </a>

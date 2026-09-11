@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../style/AgendaModal.css";
 import { API_URL } from "../config/api";
 import { COUNTRIES, FEATURED_COUNT, isoToFlagEmoji } from "../data/dialCodes";
+import { trackEvent } from "../lib/analytics";
 
 const TIPOS_TERAPIA = ["Individual", "Adolescentes", "Niña/Niño", "Pareja", "Familiar", "Otro"];
 
@@ -78,6 +79,10 @@ function AgendaModal({ isOpen, onClose }) {
       if (!res.ok) throw new Error("HTTP " + res.status);
 
       setEnviado(true);
+      trackEvent("solicitud_cita", {
+        tipo_terapia: form.tipoTerapia,
+        inversion: form.inversion === INVERSION_OPTIONS[0] ? "si" : "no",
+      });
     } catch (err) {
       console.error(err);
       setError("No pudimos enviar tu solicitud. Intenta de nuevo.");

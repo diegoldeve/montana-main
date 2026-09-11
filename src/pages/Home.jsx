@@ -12,6 +12,7 @@ import paso3 from "../assets/Paso_3.png";
 import curva1 from "../assets/curva1.png";
 import curva2 from "../assets/curva2.png";
 import { useAgendaModal } from "../context/AgendaModalContext";
+import { trackEvent } from "../lib/analytics";
 
 
 function Home() {
@@ -158,6 +159,7 @@ function Home() {
             target="_blank"
             rel="noopener noreferrer"
             className="process-btn"
+            onClick={() => trackEvent("contacto_whatsapp", { origen: "home_proceso" })}
           >
             Hablar con una canalizadora
           </a>
