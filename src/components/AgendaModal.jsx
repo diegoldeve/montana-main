@@ -66,10 +66,24 @@ function AgendaModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const digitos = form.telefono.replace(/\D/g, "");
+    const lada = form.codigoPais.replace(/\D/g, "");
+    // México (+52) y EUA/Canadá (+1) usan números de 10 dígitos
+    const diezDigitos = lada === "52" || lada === "1";
+    if ((diezDigitos && digitos.length !== 10) || (!diezDigitos && (digitos.length < 6 || digitos.length > 13))) {
+      setError(
+        diezDigitos
+          ? "Escribe tu teléfono a 10 dígitos, sin código de país."
+          : "Revisa tu teléfono: escríbelo sin el código de país."
+      );
+      return;
+    }
+
     setEnviando(true);
 
     try {
-      const telefonoCompleto = `${form.codigoPais}${form.telefono.replace(/\D/g, "")}`;
+      const telefonoCompleto = `${form.codigoPais}${digitos}`;
       const res = await fetch(`${API_URL}/api/solicitudes-agenda`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

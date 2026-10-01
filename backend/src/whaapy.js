@@ -8,7 +8,6 @@ const FUNNEL_STAGE_FORMULARIO_WEB = '448d08ba-b5f5-4025-80f5-881ab84a3a1f'
 const AGENTES_ROUND_ROBIN = [
   { id: '5225d34b-df2d-43ae-8240-2b384b904e7e', nombre: 'Sharon' },
   { id: 'ecffcdfb-a38e-49ff-80cd-a09fe0018f82', nombre: 'Monserrat' },
-  { id: '1ace76ee-1c4d-4eaa-a38a-9c8ec2ec3f59', nombre: 'Claudia' },
   { id: 'c361a82e-7b48-4e01-aaa5-27038e612539', nombre: 'Berenice' },
 ]
 
@@ -44,20 +43,36 @@ const TAG_DELAY_MS = 5000
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export async function syncContactoSitioWeb({ phone_number, name, rotationSeed }) {
+const soloDigitos = (phone) => (phone ?? '').replace(/\D/g, '')
+
+// Busca por los últimos 10 dígitos para encontrar el contacto aunque Whaapy
+// lo tenga guardado con otro prefijo (ej. +521 vs +52 en México).
+async function buscarContacto(phone_number) {
+  const ultimos10 = soloDigitos(phone_number).slice(-10)
   const search = await whaapyFetch('/contacts/v1/search', {
     method: 'POST',
     body: JSON.stringify({
-      filters: { phone_number: { eq: phone_number } },
-      limit: 1,
+      filters: { phone_number: { contains: ultimos10 } },
+      limit: 10,
     }),
   })
-
   if (!search.ok) {
-    throw new Error(`Whaapy search failed: ${search.status} ${JSON.stringify(search.data)}`)
+    throw new Error(`Whaapy search failed (${phone_number}): ${search.status} ${JSON.stringify(search.data)}`)
+  }
+  const candidatos = (search.data?.contacts ?? []).filter((c) =>
+    soloDigitos(c.phone_number).endsWith(ultimos10)
+  )
+  // Si hay duplicados, preferir el que tiene conversación más reciente
+  candidatos.sort((a, b) => (b.last_contact_at ?? '').localeCompare(a.last_contact_at ?? ''))
+  return candidatos[0] ?? null
+}
+
+export async function syncContactoSitioWeb({ phone_number, name, rotationSeed }) {
+  if (soloDigitos(phone_number).length < 10) {
+    throw new Error(`Teléfono inválido, no se sincroniza con Whaapy: ${phone_number}`)
   }
 
-  let contact = search.data?.contacts?.[0]
+  let contact = await buscarContacto(phone_number)
 
   if (!contact) {
     const create = await whaapyFetch('/contacts/v1', {
@@ -68,22 +83,28 @@ export async function syncContactoSitioWeb({ phone_number, name, rotationSeed })
         source: 'api',
       }),
     })
-    if (!create.ok) {
-      throw new Error(`Whaapy create failed: ${create.status} ${JSON.stringify(create.data)}`)
+    if (create.ok) {
+      contact = create.data.contact
+    } else {
+      // Puede fallar porque ya existe con otro formato; reintentar la búsqueda
+      contact = await buscarContacto(phone_number)
+      if (!contact) {
+        throw new Error(`Whaapy create failed (${phone_number}): ${create.status} ${JSON.stringify(create.data)}`)
+      }
     }
-    contact = create.data.contact
   }
 
+  // Enviar al número que Whaapy tiene guardado para que caiga en la misma conversación
   const send = await whaapyFetch('/messages/v1', {
     method: 'POST',
     body: JSON.stringify({
-      to: phone_number,
+      to: contact.phone_number ?? phone_number,
       type: 'template',
       templateName: TEMPLATE_FORMULARIO,
     }),
   })
   if (!send.ok) {
-    console.error(`Whaapy template send failed: ${send.status} ${JSON.stringify(send.data)}`)
+    console.error(`Whaapy template send failed (${phone_number}): ${send.status} ${JSON.stringify(send.data)}`)
   }
 
   await sleep(TAG_DELAY_MS)
@@ -98,12 +119,23 @@ export async function syncContactoSitioWeb({ phone_number, name, rotationSeed })
       AGENTES_ROUND_ROBIN[Math.abs(rotationSeed ?? 0) % AGENTES_ROUND_ROBIN.length].id
   }
 
-  const update = await whaapyFetch(`/contacts/v1/${contact.id}`, {
+  let update = await whaapyFetch(`/contacts/v1/${contact.id}`, {
     method: 'PATCH',
     body: JSON.stringify(patchBody),
   })
+  if (!update.ok && patchBody.assigned_agent_id) {
+    // Si falla la asignación (ej. agente que ya no está en el equipo), al menos aplicar tag y etapa
+    console.error(
+      `Whaapy assign failed (${phone_number}, agente ${patchBody.assigned_agent_id}): ${update.status} ${JSON.stringify(update.data)}`
+    )
+    delete patchBody.assigned_agent_id
+    update = await whaapyFetch(`/contacts/v1/${contact.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(patchBody),
+    })
+  }
   if (!update.ok) {
-    throw new Error(`Whaapy tag failed: ${update.status} ${JSON.stringify(update.data)}`)
+    throw new Error(`Whaapy tag failed (${phone_number}): ${update.status} ${JSON.stringify(update.data)}`)
   }
 
   const agenteId =
