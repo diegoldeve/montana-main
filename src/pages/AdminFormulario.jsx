@@ -8,8 +8,10 @@ const TERAPEUTAS = ["Sharon", "Monserrat", "Claudia", "Berenice"];
 
 // El backend en Railway puede tardar en responder si la conexión a la base
 // se quedó muerta; cada intento tiene timeout y se reintenta hasta 3 veces.
-async function fetchSolicitudes({ apiKey, q, agente, desde, hasta, signal }) {
+async function fetchSolicitudes({ apiKey, q, agente, desde, hasta, limit, page, signal }) {
   const params = new URLSearchParams();
+  params.set("limit", String(limit));
+  params.set("page", String(page));
   if (q) params.set("q", q);
   if (agente) params.set("agente", agente);
   if (desde) params.set("desde", desde);
@@ -52,6 +54,8 @@ function AdminFormulario() {
   const [desde, setDesde] = useState("");
   const [hasta, setHasta] = useState("");
   const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const [page, setPage] = useState(1);
   const [reloadKey, setReloadKey] = useState(0);
 
   const handleLogin = (e) => {
@@ -77,6 +81,8 @@ function AdminFormulario() {
           agente,
           desde,
           hasta,
+          limit,
+          page,
           signal: controller.signal,
         });
         const data = Array.isArray(json.data) ? json.data : [];
@@ -95,9 +101,18 @@ function AdminFormulario() {
       clearTimeout(debounce);
       controller.abort();
     };
-  }, [authenticated, password, query, agente, desde, hasta, reloadKey]);
+  }, [authenticated, password, query, agente, desde, hasta, limit, page, reloadKey]);
+
+  // Cualquier cambio de filtro o de tamaño de página regresa a la página 1.
+  const cambiarFiltro = (setter, value) => {
+    setter(value);
+    setPage(1);
+  };
 
   const hayFiltros = query.trim() || agente || desde || hasta;
+  const totalPages = Math.max(Math.ceil(total / limit), 1);
+  const primero = total ? (page - 1) * limit + 1 : 0;
+  const ultimo = (page - 1) * limit + solicitudes.length;
 
   if (!authenticated) {
     return (
@@ -127,12 +142,12 @@ function AdminFormulario() {
           className="admin-search"
           placeholder="Buscar por nombre o teléfono…"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => cambiarFiltro(setQuery, e.target.value)}
         />
         <select
           className="admin-select"
           value={agente}
-          onChange={(e) => setAgente(e.target.value)}
+          onChange={(e) => cambiarFiltro(setAgente, e.target.value)}
         >
           <option value="">Todas las terapeutas</option>
           {TERAPEUTAS.map((t) => (
@@ -148,7 +163,7 @@ function AdminFormulario() {
             type="date"
             value={desde}
             max={hasta || undefined}
-            onChange={(e) => setDesde(e.target.value)}
+            onChange={(e) => cambiarFiltro(setDesde, e.target.value)}
           />
         </label>
         <label className="admin-date">
@@ -157,7 +172,7 @@ function AdminFormulario() {
             type="date"
             value={hasta}
             min={desde || undefined}
-            onChange={(e) => setHasta(e.target.value)}
+            onChange={(e) => cambiarFiltro(setHasta, e.target.value)}
           />
         </label>
         {(desde || hasta) && (
@@ -165,6 +180,7 @@ function AdminFormulario() {
             type="button"
             className="admin-clear-dates"
             onClick={() => {
+              setPage(1);
               setDesde("");
               setHasta("");
             }}
@@ -175,11 +191,26 @@ function AdminFormulario() {
       </div>
 
       {!loading && !error && (
-        <p className="admin-total">
-          Total: <strong>{total}</strong>
-          {total > solicitudes.length &&
-            ` (mostrando los ${solicitudes.length} más recientes)`}
-        </p>
+        <div className="admin-total">
+          <p>
+            Total: <strong>{total}</strong>
+            {total > 0 && ` · mostrando ${primero}–${ultimo}`}
+          </p>
+          <label className="admin-date">
+            Ver
+            <select
+              className="admin-select"
+              value={limit}
+              onChange={(e) => cambiarFiltro(setLimit, Number(e.target.value))}
+            >
+              {[20, 50, 100].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       )}
 
       {error && (
@@ -245,6 +276,38 @@ function AdminFormulario() {
             )}
           </div>
         )
+      )}
+
+      {!loading && !error && totalPages > 1 && (
+        <nav className="admin-pagination" aria-label="Paginación">
+          <button type="button" onClick={() => setPage(1)} disabled={page === 1}>
+            «
+          </button>
+          <button
+            type="button"
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+          >
+            Anterior
+          </button>
+          <span>
+            Página {page} de {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page >= totalPages}
+          >
+            Siguiente
+          </button>
+          <button
+            type="button"
+            onClick={() => setPage(totalPages)}
+            disabled={page >= totalPages}
+          >
+            »
+          </button>
+        </nav>
       )}
     </section>
   );

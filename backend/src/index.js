@@ -92,7 +92,8 @@ app.post("/api/solicitudes-agenda", async (req, res) => {
 
 app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
   try {
-    const limit = Math.min(parseInt(req.query.limit ?? "50", 10), 100);
+    const limit = Math.min(Math.max(parseInt(req.query.limit ?? "50", 10) || 50, 1), 100);
+    const page = Math.max(parseInt(req.query.page ?? "1", 10) || 1, 1);
     const cursor = req.query.cursor ? Number(req.query.cursor) : null;
     const q = (req.query.q ?? "").toString().trim();
 
@@ -144,6 +145,10 @@ app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
       listWhere += ` AND id < $${listParams.length}`;
     }
     listParams.push(limit);
+    const limitIdx = listParams.length;
+    // Paginación por número de página (OFFSET); se ignora si viene cursor.
+    listParams.push(cursor ? 0 : (page - 1) * limit);
+    const offsetIdx = listParams.length;
 
     const { rows } = await pool.query(
       `
@@ -152,13 +157,13 @@ app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
       FROM public.solicitudes_agenda
       ${listWhere}
       ORDER BY id DESC
-      LIMIT $${listParams.length}
+      LIMIT $${limitIdx} OFFSET $${offsetIdx}
       `,
       listParams
     );
 
     const nextCursor = rows.length === limit ? rows[rows.length - 1].id : null;
-    res.json({ data: rows, nextCursor, total });
+    res.json({ data: rows, nextCursor, total, page, limit });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "DB_ERROR" });
