@@ -8,10 +8,12 @@ const TERAPEUTAS = ["Sharon", "Monserrat", "Claudia", "Berenice"];
 
 // El backend en Railway puede tardar en responder si la conexión a la base
 // se quedó muerta; cada intento tiene timeout y se reintenta hasta 3 veces.
-async function fetchSolicitudes({ apiKey, q, agente, signal }) {
+async function fetchSolicitudes({ apiKey, q, agente, desde, hasta, signal }) {
   const params = new URLSearchParams();
   if (q) params.set("q", q);
   if (agente) params.set("agente", agente);
+  if (desde) params.set("desde", desde);
+  if (hasta) params.set("hasta", hasta);
   const qs = params.toString();
   const url = `${API_URL}/api/solicitudes-agenda${qs ? `?${qs}` : ""}`;
 
@@ -47,6 +49,9 @@ function AdminFormulario() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [agente, setAgente] = useState("");
+  const [desde, setDesde] = useState("");
+  const [hasta, setHasta] = useState("");
+  const [total, setTotal] = useState(0);
   const [reloadKey, setReloadKey] = useState(0);
 
   const handleLogin = (e) => {
@@ -70,9 +75,13 @@ function AdminFormulario() {
           apiKey: password,
           q: query.trim(),
           agente,
+          desde,
+          hasta,
           signal: controller.signal,
         });
-        setSolicitudes(Array.isArray(json.data) ? json.data : []);
+        const data = Array.isArray(json.data) ? json.data : [];
+        setSolicitudes(data);
+        setTotal(typeof json.total === "number" ? json.total : data.length);
         setLoading(false);
       } catch (e) {
         if (controller.signal.aborted) return;
@@ -86,7 +95,9 @@ function AdminFormulario() {
       clearTimeout(debounce);
       controller.abort();
     };
-  }, [authenticated, password, query, agente, reloadKey]);
+  }, [authenticated, password, query, agente, desde, hasta, reloadKey]);
+
+  const hayFiltros = query.trim() || agente || desde || hasta;
 
   if (!authenticated) {
     return (
@@ -131,7 +142,45 @@ function AdminFormulario() {
           ))}
           <option value="sin">Sin asignar</option>
         </select>
+        <label className="admin-date">
+          Desde
+          <input
+            type="date"
+            value={desde}
+            max={hasta || undefined}
+            onChange={(e) => setDesde(e.target.value)}
+          />
+        </label>
+        <label className="admin-date">
+          Hasta
+          <input
+            type="date"
+            value={hasta}
+            min={desde || undefined}
+            onChange={(e) => setHasta(e.target.value)}
+          />
+        </label>
+        {(desde || hasta) && (
+          <button
+            type="button"
+            className="admin-clear-dates"
+            onClick={() => {
+              setDesde("");
+              setHasta("");
+            }}
+          >
+            Limpiar fechas
+          </button>
+        )}
       </div>
+
+      {!loading && !error && (
+        <p className="admin-total">
+          Total: <strong>{total}</strong>
+          {total > solicitudes.length &&
+            ` (mostrando los ${solicitudes.length} más recientes)`}
+        </p>
+      )}
 
       {error && (
         <div className="admin-error">
@@ -189,8 +238,8 @@ function AdminFormulario() {
             </table>
             {!solicitudes.length && (
               <p className="admin-empty">
-                {query.trim()
-                  ? "Sin resultados para la búsqueda."
+                {hayFiltros
+                  ? "Sin resultados para los filtros."
                   : "No hay solicitudes todavía."}
               </p>
             )}

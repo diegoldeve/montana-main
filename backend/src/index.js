@@ -98,10 +98,6 @@ app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
 
     const params = [];
     let where = "WHERE 1=1";
-    if (cursor) {
-      params.push(cursor);
-      where += ` AND id < $${params.length}`;
-    }
     if (q) {
       params.push(q);
       where += `
@@ -120,22 +116,49 @@ app.get("/api/solicitudes-agenda", requireAdminKey, async (req, res) => {
       params.push(agente);
       where += ` AND agente_asignado ILIKE $${params.length}`;
     }
-    params.push(limit);
+    // Fechas en formato YYYY-MM-DD, interpretadas en hora de Ciudad de México.
+    // "hasta" es inclusivo: se toma hasta el inicio del día siguiente.
+    const isDate = (v) => /^\d{4}-\d{2}-\d{2}$/.test(v);
+    const desde = (req.query.desde ?? "").toString().trim();
+    const hasta = (req.query.hasta ?? "").toString().trim();
+    if (isDate(desde)) {
+      params.push(desde);
+      where += ` AND created_at >= ($${params.length}::date)::timestamp AT TIME ZONE 'America/Mexico_City'`;
+    }
+    if (isDate(hasta)) {
+      params.push(hasta);
+      where += ` AND created_at < ($${params.length}::date + 1)::timestamp AT TIME ZONE 'America/Mexico_City'`;
+    }
+
+    // El total usa los mismos filtros pero sin cursor ni límite.
+    const countResult = await pool.query(
+      `SELECT COUNT(*)::int AS total FROM public.solicitudes_agenda ${where}`,
+      params
+    );
+    const total = countResult.rows[0].total;
+
+    const listParams = [...params];
+    let listWhere = where;
+    if (cursor) {
+      listParams.push(cursor);
+      listWhere += ` AND id < $${listParams.length}`;
+    }
+    listParams.push(limit);
 
     const { rows } = await pool.query(
       `
       SELECT id, nombre, apellido, edad, telefono, email, pais, ciudad,
              tipo_terapia, motivo_consulta, expectativas, inversion, agente_asignado, created_at
       FROM public.solicitudes_agenda
-      ${where}
+      ${listWhere}
       ORDER BY id DESC
-      LIMIT $${params.length}
+      LIMIT $${listParams.length}
       `,
-      params
+      listParams
     );
 
     const nextCursor = rows.length === limit ? rows[rows.length - 1].id : null;
-    res.json({ data: rows, nextCursor });
+    res.json({ data: rows, nextCursor, total });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "DB_ERROR" });
